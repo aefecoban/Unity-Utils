@@ -28,13 +28,7 @@ namespace TwinSoulS
         private void zero()
         {
             movementVector = Vector3.zero;
-            jumpNow = false;
-            run = false;
-            pause = false;
-            attack = false;
-            sAttack = false;
-            crouch = false;
-            interactive = false;
+            jumpNow = run = pause = attack = sAttack = crouch = interactive = false;
         }
 
         public void Update()
@@ -42,93 +36,27 @@ namespace TwinSoulS
             zero();
 
             foreach (var key in upKeys)
-            {
-                if (Input.GetKey(key))
-                {
-                    movementVector.y += 1;
-                    break;
-                }
-            }
+                if (Input.GetKey(key)) { movementVector.y += 1; break; }
             foreach (var key in downKeys)
-            {
-                if (Input.GetKey(key))
-                {
-                    movementVector.y -= 1;
-                    break;
-                }
-            }
+                if (Input.GetKey(key)) { movementVector.y -= 1; break; }
             foreach (var key in rightKeys)
-            {
-                if (Input.GetKey(key))
-                {
-                    movementVector.x += 1;
-                    break;
-                }
-            }
+                if (Input.GetKey(key)) { movementVector.x += 1; break; }
             foreach (var key in leftKeys)
-            {
-                if (Input.GetKey(key))
-                {
-                    movementVector.x -= 1;
-                    break;
-                }
-            }
+                if (Input.GetKey(key)) { movementVector.x -= 1; break; }
             foreach (var key in jumpKeys)
-            {
-                if (Input.GetKey(key))
-                {
-                    jumpNow = true;
-                    break;
-                }
-            }
+                if (Input.GetKey(key)) { jumpNow = true;        break; }
             foreach (var key in runKeys)
-            {
-                if (Input.GetKey(key))
-                {
-                    run = true;
-                    break;
-                }
-            }
+                if (Input.GetKey(key)) { run = true;            break; }
             foreach (var key in crouchKeys)
-            {
-                if (Input.GetKey(key))
-                {
-                    crouch = true;
-                    break;
-                }
-            }
+                if (Input.GetKey(key)) { crouch = true;         break; }
             foreach (var key in attackKeys)
-            {
-                if (Input.GetKey(key))
-                {
-                    attack = true;
-                    break;
-                }
-            }
+                if (Input.GetKey(key)) { attack = true;         break; }
             foreach (var key in strongAttackKeys)
-            {
-                if (Input.GetKey(key))
-                {
-                    sAttack = true;
-                    break;
-                }
-            }
+                if (Input.GetKey(key)) { sAttack = true;        break; }
             foreach (var key in interactiveKeys)
-            {
-                if (Input.GetKey(key))
-                {
-                    interactive = true;
-                    break;
-                }
-            }
+                if (Input.GetKey(key)) { interactive = true;    break; }
             foreach (var key in pauseKeys)
-            {
-                if (Input.GetKey(key))
-                {
-                    pause = true;
-                    break;
-                }
-            }
+                if (Input.GetKey(key)) { pause = true;          break; }
 
             movementVector = movementVector.normalized;
         }
