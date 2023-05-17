@@ -10,6 +10,10 @@ public class CustomFileSystem
     private string location = "";
     private bool isFileExists = false;
 
+    
+    public string b64encode(string text) => Convert.ToBase64String(Encoding.UTF8.GetBytes(text));
+    public string b64decode(string text) => Encoding.UTF8.GetString(Convert.FromBase64String(text));
+
     public CustomFileSystem(string file = "")
     {
         setFile(file);
@@ -29,15 +33,9 @@ public class CustomFileSystem
         {
             buff = buff + list[i];
             if (i + 1 < list.Count)
-            {
                 buff = buff + '\n';
-            }
         }
-        if (b64)
-        {
-            buff = b64decode(buff);
-        }
-        return buff;
+        return (b64) ? b64decode(buff) : buff;
     }
 
     public List<string> getAllDatas()
@@ -80,16 +78,6 @@ public class CustomFileSystem
         return false;
     }
 
-    public string b64encode(string text)
-    {
-        return System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(text));
-    }
-
-    public string b64decode(string text)
-    {
-        return System.Text.Encoding.UTF8.GetString(System.Convert.FromBase64String(text));
-    }
-
     public bool write(string data, bool append = false, bool b64 = false)
     {
         fileExists();
@@ -104,7 +92,6 @@ public class CustomFileSystem
                     data = r + data;
                     data = b64encode(data);
                     File.WriteAllText(location, data);
-
                 }
                 else
                 {
@@ -113,10 +100,7 @@ public class CustomFileSystem
             }
             else
             {
-                if (b64)
-                {
-                    data = b64encode(data);
-                }
+                data = (b64) ? b64encode(data) : data;
                 File.WriteAllText(location, data);
             }
             return true;
@@ -127,8 +111,7 @@ public class CustomFileSystem
 
     public bool fileExists()
     {
-        isFileExists = File.Exists(location);
-        return (isFileExists);
+        return File.Exists(location);
     }
 
 }
