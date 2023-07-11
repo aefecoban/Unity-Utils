@@ -1,65 +1,62 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-namespace TwinSoulS
+[Serializable]
+public class PlayerInputManager
 {
-    public class PlayerInputSystem : MonoBehaviour
+    [SerializeField] public KeyCode[] forwardKeys = new KeyCode[2] { KeyCode.W, KeyCode.UpArrow };
+    [SerializeField] public KeyCode[] backwardKeys = new KeyCode[2] { KeyCode.S, KeyCode.DownArrow };
+    [SerializeField] public KeyCode[] leftKeys = new KeyCode[2] { KeyCode.A, KeyCode.LeftArrow};
+    [SerializeField] public KeyCode[] rightKeys = new KeyCode[2] { KeyCode.D, KeyCode.RightArrow };
+    [SerializeField] public KeyCode[] runKeys = new KeyCode[2] { KeyCode.LeftShift, KeyCode.RightShift };
+    [SerializeField] public KeyCode[] jumpKeys = new KeyCode[1] { KeyCode.Space };
+    [SerializeField] public KeyCode[] crouchKeys = new KeyCode[1] { KeyCode.C };
+
+    public Vector2 MovementVector = Vector2.zero;
+    public bool IsRun = false;
+    public bool IsCrouch = false;
+    public bool IsJump = false;
+
+    public List<Action> callbackForActionKeys = new List<Action>();
+
+    Tuple<KeyCode[], Action>[] MovementKeys = null;
+
+    public void Prepare()
     {
-        [SerializeField] public KeyCode[] upKeys = new KeyCode[2] { KeyCode.W, KeyCode.UpArrow };
-        [SerializeField] public KeyCode[] downKeys = new KeyCode[2] { KeyCode.S, KeyCode.DownArrow };
-        [SerializeField] public KeyCode[] leftKeys = new KeyCode[2] { KeyCode.A, KeyCode.LeftArrow };
-        [SerializeField] public KeyCode[] rightKeys = new KeyCode[2] { KeyCode.D, KeyCode.RightArrow };
-        [SerializeField] public KeyCode[] jumpKeys = new KeyCode[1] { KeyCode.Space };
-        [SerializeField] public KeyCode[] interactiveKeys = new KeyCode[1] { KeyCode.E };
-        [SerializeField] public KeyCode[] pauseKeys = new KeyCode[1] { KeyCode.Escape };
-        [SerializeField] public KeyCode[] attackKeys = new KeyCode[1] { KeyCode.Mouse0 };
-        [SerializeField] public KeyCode[] strongAttackKeys = new KeyCode[1] { KeyCode.Mouse1 };
-        [SerializeField] public KeyCode[] crouchKeys = new KeyCode[1] { KeyCode.C };
-        [SerializeField] public KeyCode[] runKeys = new KeyCode[2] { KeyCode.LeftShift, KeyCode.RightShift };
-
-        public Vector3 movementVector = Vector3.zero;
-        public bool jumpNow = false;
-        public bool run = false;
-        public bool pause = false;
-        public bool attack = false;
-        public bool sAttack = false;
-        public bool crouch = false;
-        public bool interactive = false;
-
-        private void zero()
+        MovementKeys = new Tuple<KeyCode[], Action>[7]
         {
-            movementVector = Vector3.zero;
-            jumpNow = run = pause = attack = sAttack = crouch = interactive = false;
-        }
-
-        public void Update()
-        {
-            zero();
-
-            foreach (var key in upKeys)
-                if (Input.GetKey(key)) { movementVector.y += 1; break; }
-            foreach (var key in downKeys)
-                if (Input.GetKey(key)) { movementVector.y -= 1; break; }
-            foreach (var key in rightKeys)
-                if (Input.GetKey(key)) { movementVector.x += 1; break; }
-            foreach (var key in leftKeys)
-                if (Input.GetKey(key)) { movementVector.x -= 1; break; }
-            foreach (var key in jumpKeys)
-                if (Input.GetKey(key)) { jumpNow = true;        break; }
-            foreach (var key in runKeys)
-                if (Input.GetKey(key)) { run = true;            break; }
-            foreach (var key in crouchKeys)
-                if (Input.GetKey(key)) { crouch = true;         break; }
-            foreach (var key in attackKeys)
-                if (Input.GetKey(key)) { attack = true;         break; }
-            foreach (var key in strongAttackKeys)
-                if (Input.GetKey(key)) { sAttack = true;        break; }
-            foreach (var key in interactiveKeys)
-                if (Input.GetKey(key)) { interactive = true;    break; }
-            foreach (var key in pauseKeys)
-                if (Input.GetKey(key)) { pause = true;          break; }
-
-            movementVector = movementVector.normalized;
-        }
-
+            new Tuple<KeyCode[], Action>(forwardKeys, () => { MovementVector.x++; }),
+            new Tuple<KeyCode[], Action>(backwardKeys, () => { MovementVector.x--; }),
+            new Tuple<KeyCode[], Action>(leftKeys, () => { MovementVector.y++; }),
+            new Tuple<KeyCode[], Action>(rightKeys, () => { MovementVector.y--; }),
+            new Tuple<KeyCode[], Action>(runKeys, () => { IsRun = true; }),
+            new Tuple<KeyCode[], Action>(crouchKeys, () => { IsCrouch = true; }),
+            new Tuple<KeyCode[], Action>(jumpKeys, () => { IsJump = true; })
+        };
     }
+
+    private void ResetAll()
+    {
+         MovementVector = Vector2.zero;
+         IsRun = false;
+         IsCrouch = false;
+         IsJump = false;
+    }
+
+    public void Update()
+    {
+        ResetAll();
+
+        foreach (Tuple<KeyCode[], Action> T in MovementKeys)
+            foreach (var key in T.Item1)
+                if (Input.GetKey(key))
+                {
+                    T.Item2();
+                    break;
+                }
+
+        MovementVector = MovementVector.normalized;
+    }
+
 }
